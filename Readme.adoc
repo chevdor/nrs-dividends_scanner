@@ -1,0 +1,5 @@
+= Install
+Copy this entire folder into:
+C:\Users\your.name\AppData\Local\Nxt Wallet\nxt\html\ui\plugins
+or
+/Applications/Nxt Wallet.app/Contents/Resources/nxt/html/ui/plugins
