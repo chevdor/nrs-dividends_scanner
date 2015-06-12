@@ -1,7 +1,7 @@
 {
     "pluginVersion": 1,
     "name": "Dividends Scanner",
-    "myVersion": "0.2.0.0",
+    "myVersion": "0.3.0.0",
     "shortDescription": "Analyzes your assets and provides stats about your dividends.",
     "infoUrl": "https://github.com/chevdor/nrs-dividends_scanner",
     "startPage": "p_dividends_scanner",

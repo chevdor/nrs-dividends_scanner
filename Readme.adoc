@@ -17,3 +17,7 @@ or
    /Applications/Nxt Wallet.app/Contents/Resources/nxt/html/ui/plugins
 
 Then start your client and ensure to enable plugins.
+
+== Support
+
+Your support is very welcome in the form of a little message or a donation at *NXT-YCLA-V44V-USJK-3GPJD*. Donations of any amount are much appreciated.

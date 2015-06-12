@@ -37,7 +37,7 @@ var NRS = (function(NRS, $, undefined) {
         });
     };
 
-    var drawChart = function(name, contentData, size) {
+    var drawChart = function(name, title, contentData, size) {
         //console.log($('#pieChart')); 
         // first we empty any remaining pie
         $('#' + name).empty();
@@ -45,7 +45,7 @@ var NRS = (function(NRS, $, undefined) {
         var pie = new d3pie(name, {
             "header": {
                 "title": {
-                    "text": "Asset Distribution Chart",
+                    "text": title,
                     "fontSize": 22,
                     "font": "verdana"
                 },
@@ -124,7 +124,7 @@ var NRS = (function(NRS, $, undefined) {
             //console.log('Drawing...');
             //
             $('#my_assets_page>.content').prepend('<div id="insertedAssetDistributionChart"></div>');
-            drawChart('assetDistributionChart', dataContent);
+            drawChart('assetDistributionChart', 'Asset Distribution', dataContent);
             // drawChart('insertedAssetDistributionChart', dataContent, {
             //     "canvasHeight": 200,
             //     "canvasWidth": 300,
@@ -222,7 +222,7 @@ var NRS = (function(NRS, $, undefined) {
                             "value": h[j].aggregated.transactedAmountNQT
                         });
                     }
-                    drawChart('incomeDistributionChart', chartData);
+                    drawChart('incomeDistributionChart', 'Income Distribution', chartData);
                 }
             });
         });
