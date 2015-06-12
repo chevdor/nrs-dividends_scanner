@@ -6,7 +6,9 @@ Plugin for the NXT NRS client that analyses your assets and largest sources of i
 image:img/screenshot.png[]
 
 == Install
-Copy this entire folder into:
+You can get the latest release from https://github.com/chevdor/nrs-dividends_scanner/releases
+
+Unzip the file, rename the folder to +dividends_scanner+ and copy it to:
 
    C:\Users\your.name\AppData\Local\Nxt Wallet\nxt\html\ui\plugins
 
