@@ -1,5 +1,17 @@
-= Install
+= NXT/NRS Plugin: Dividend Scanner
+chevdor <chevdor@gmail.com>
+
+Plugin for the NXT NRS client that analyses your assets and largest sources of income.
+
+image:img/screenshot.png[]
+
+== Install
 Copy this entire folder into:
-C:\Users\your.name\AppData\Local\Nxt Wallet\nxt\html\ui\plugins
+
+   C:\Users\your.name\AppData\Local\Nxt Wallet\nxt\html\ui\plugins
+
 or
-/Applications/Nxt Wallet.app/Contents/Resources/nxt/html/ui/plugins
+
+   /Applications/Nxt Wallet.app/Contents/Resources/nxt/html/ui/plugins
+
+Then start your client and ensure to enable plugins.
