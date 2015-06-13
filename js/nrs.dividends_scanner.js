@@ -2,6 +2,8 @@
  * @depends {nrs.js}
  */
 var NRS = (function(NRS, $, undefined) {
+    var contacts = [];
+
     var sortByAggregatedIncomeAmount = function(a, b) {
         var x = a.aggregated.transactedAmountNQT;
         var y = b.aggregated.transactedAmountNQT;
@@ -38,7 +40,6 @@ var NRS = (function(NRS, $, undefined) {
     };
 
     var drawChart = function(name, title, contentData, size) {
-        //console.log($('#pieChart')); 
         // first we empty any remaining pie
         $('#' + name).empty();
 
@@ -82,7 +83,7 @@ var NRS = (function(NRS, $, undefined) {
                     "pieDistance": 32
                 },
                 "inner": {
-                    "format": "value"
+                    "string": "{percentage}%"
                 },
                 "mainLabel": {
                     "font": "verdana"
@@ -107,7 +108,7 @@ var NRS = (function(NRS, $, undefined) {
             "tooltips": {
                 "enabled": true,
                 "type": "placeholder",
-                "string": "{label}: {percentage}%"
+                "string": "{value} NXT"
             } //,
             // "effects": {
             //     "pullOutSegmentOnClick": {
@@ -121,15 +122,8 @@ var NRS = (function(NRS, $, undefined) {
 
     var draw = function(dataContent) {
         if (dataContent.length === NRS.accountInfo.assetBalances.length) {
-            //console.log('Drawing...');
-            //
             $('#my_assets_page>.content').prepend('<div id="insertedAssetDistributionChart"></div>');
             drawChart('assetDistributionChart', 'Asset Distribution', dataContent);
-            // drawChart('insertedAssetDistributionChart', dataContent, {
-            //     "canvasHeight": 200,
-            //     "canvasWidth": 300,
-            //     "pieOuterRadius": "100%"
-            // }); // we had the chart in the highjacked area ;)
             NRS.dataLoaded();
         } else {
             //console.log('Need more data to draw', dataContent.length, NRS.accountInfo.assetBalances.length);
@@ -140,8 +134,31 @@ var NRS = (function(NRS, $, undefined) {
         //console.info('NRS.setup.p_dividends_scanner');
         //Do one-time initialization stuff here
         $('#p_dividends_scanner_startup_date_time').html(moment().format('LLL'));
-    };
 
+        // Here we looks for the users contact in order to display there
+        // name when available
+        var rq = window.indexedDB.open("NRS_USER_DB_" + NRS.accountInfo.account, 2);
+
+        rq.onerror = function(event) {
+            alert('Error with IndexedDB: ' + event);
+        };
+
+        rq.onsuccess = function(event) {
+            db = event.target.result;
+
+            var objectStore = db.transaction("contacts").objectStore("contacts");
+            objectStore.openCursor().onsuccess = function(event) {
+                var cursor = event.target.result;
+
+                if (cursor) {
+                    contacts.push(cursor.value);
+                    cursor.continue();
+                } else {
+                    console.debug("Got all contacts: " + contacts.length);
+                }
+            };
+        };
+    };
 
     NRS.pages.p_dividends_scanner = function() {
         var rows = "";
@@ -152,13 +169,12 @@ var NRS = (function(NRS, $, undefined) {
             //console.log(obj.asset, obj.balanceQNT);
             getAsset(obj.asset, function(asset) {
                 if (asset) {
-                    console.log('Processing ' + asset.name);
                     getAssetBidPrice(asset.asset, function(order) {
                         var price;
                         if (order)
                             price = order.priceNQT;
                         else
-                            price = 1; // cheating a bit for d3pie... 1e-8 is almost 0 anyway...
+                            price = 1; // cheating a bit for d3pie... 1e-8 is almost 0 anyway :)
 
                         //console.log(asset.name, obj.balanceQNT, price, asset.decimals);
                         dataContent.push({
@@ -172,6 +188,16 @@ var NRS = (function(NRS, $, undefined) {
             });
         });
 
+        var findContact = function(accountRS) {
+            for (var i = 0; i < contacts.length; i++) {
+                if (contacts[i].accountRS === accountRS) {
+                    return contacts[i];
+                }
+            }
+
+            return null;
+        };
+
         // INCOME ANALYSIS
         NRS.sendRequest("getAccountTransactions+", {
             "account": NRS.accountInfo.accountRS,
@@ -179,8 +205,6 @@ var NRS = (function(NRS, $, undefined) {
             "type": 0,
             "subtype": 0
         }, function(response) {
-            //console.log(response);
-
             var transactions = response.transactions;
             var h = []; // [{sender: XYZ, transactions: [], aggregated: {nbTransactions: xx, transactedAmount: }}]
 
@@ -213,12 +237,15 @@ var NRS = (function(NRS, $, undefined) {
                 if (i >= transactions.length - 1) {
                     h.sort(sortByAggregatedIncomeAmount);
                     h.reverse();
-                    //console.log(h);
 
                     var chartData = [];
                     for (var j = 0; j < h.length; j++) {
+
+                        var senderRS = h[j].senderRS;
+                        var sender = findContact(senderRS);
+
                         chartData.push({
-                            "label": h[j].senderRS,
+                            "label": sender ? sender.name : senderRS,
                             "value": h[j].aggregated.transactedAmountNQT
                         });
                     }
